@@ -1,0 +1,53 @@
+glob: |
+  The following syntax for glob patterns is supported:
+
+  * ``*`` - matches any number of any characters including none
+  * ``?`` - matches any single character
+  * ``[abc]`` - matches one character given in the bracket
+  * ``[a-z]`` - matches one character from the range given in the bracket
+
+  Patterns are evaluated from left to right.
+  If a pattern starts with ``!`` it unselects items that were selected by previous patterns i.e. ``a?,!aa`` selects *ab* but not *aa*.
+
+interval: |
+  Time after which a successfully completed task would be run again, supported time units are:
+
+  * ``d`` - days
+  * ``h`` - hours
+  * ``m`` - minutes
+  * ``s`` - seconds
+  * ``ms`` - milliseconds
+
+  The task run date is aligned with ``--start date`` value.
+  For example, if you select ``--interval 7d`` task would run weekly at the ``--start-date`` time.
+
+start-date: |
+  The `date` can be expressed relatively to now or as a RFC3339 formatted string.
+  To run the task in 2 hours use ``now+2h``, supported units are:
+
+  * ``d`` - days
+  * ``h`` - hours
+  * ``m`` - minutes
+  * ``s`` - seconds
+  * ``ms`` - milliseconds
+
+  If you want the task to start at a specified date use RFC3339 formatted string i.e. ``2018-01-02T15:04:05-07:00``.
+  If you want the repair to start immediately, use the value ``now`` or skip this flag.
+
+num-retries: |
+  `Number` of times a task reruns following a failure.
+
+dc: |
+  A `list` of datacenter glob patterns separated by a comma, e.g. ``dc1,!otherdc*`` used to specify the datacenters to include or exclude.
+  ${glob}
+
+keyspace: |
+  A `list` of glob patterns separated by a comma used to include or exclude tables.
+  The patterns match keyspaces and tables, separate the keyspace name from the table name with a dot e.g. ``keyspace,!keyspace.table_prefix_*``.
+  ${glob}
+
+location: |
+  A `list` of backup locations separated by a comma, specifies where to place the backup, the format is ``[<dc>:]<provider>:<name>``.
+  The ``<dc>`` parameter is optional it allows to specify location for a datacenter in a multi-dc setting, it must match Scylla nodes datacenter.
+  The supported storage ``<provider>``s are ``azure``, ``gcs``, ``s3``.
+  The ``name`` parameter is a bucket name, it must be an alphanumeric string and **may contain a dash and or a dot, but other characters are forbidden**.
