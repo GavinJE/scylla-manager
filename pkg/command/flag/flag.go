@@ -16,12 +16,12 @@ func Wrap(fs *flag.FlagSet) Wrapper {
 // Common task flags
 //
 
-func (w Wrapper) Interval(p *string) {
-	w.StringVarP(p, "interval", "i", "0", usage["interval"])
+func (w Wrapper) Interval(p *Duration) {
+	w.VarP(p, "interval", "i", usage["interval"])
 }
 
-func (w Wrapper) StartDate(p *string) {
-	w.StringVarP(p, "start-date", "s", "now", usage["start-date"])
+func (w Wrapper) StartDate(p *Time) {
+	w.VarP(p, "start-date", "s", usage["start-date"])
 }
 
 func (w Wrapper) NumRetries(p *int64, def int64) {

@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-openapi/strfmt"
 	"github.com/scylladb/go-set/strset"
+	"github.com/scylladb/scylla-manager/pkg/command/flag"
 	"github.com/scylladb/scylla-manager/pkg/managerclient"
 	"github.com/scylladb/scylla-manager/pkg/service/backup/backupspec"
 	"github.com/scylladb/scylla-manager/pkg/service/scheduler"
@@ -256,12 +257,12 @@ var backupListCmd = &cobra.Command{
 func init() {
 	cmd := backupListCmd
 	fs := cmd.Flags()
-	fs.StringSliceP("location", "L", nil,
-		"comma-separated `list` of backup locations in the format [<dc>:]<provider>:<name> e.g. s3:my-bucket, the supported providers are: "+strings.Join(backupspec.Providers(), ", ")+". The <dc>: part is optional and is only needed when different datacenters are being used to upload data to different locations") // nolint: lll
+	w := flag.Wrap(fs)
 	fs.Bool("all-clusters", false,
 		"show backups of all clusters stored in location")
-	fs.StringSliceP("keyspace", "K", nil,
-		"comma-separated `list` of keyspace/tables glob patterns, e.g. 'keyspace,!keyspace.table_prefix_*' used to include or exclude keyspaces from backup")
+	var x []string
+	w.Location(&x)
+	w.Keyspace(&x)
 	fs.String("min-date", "",
 		"specifies minimal snapshot date expressed in RFC3339 form or now[+duration], e.g. now+3d2h10m, valid units are d, h, m, s")
 	fs.String("max-date", "",
@@ -446,8 +447,6 @@ func init() {
 
 func backupFlags(cmd *cobra.Command) *pflag.FlagSet {
 	fs := cmd.Flags()
-	fs.StringSliceP("keyspace", "K", nil,
-		"comma-separated `list` of keyspace/tables glob patterns, e.g. 'keyspace,!keyspace.table_prefix_*' used to include or exclude keyspaces from backup")
 	fs.StringSlice("dc", nil,
 		"comma-separated `list` of datacenter glob patterns, e.g. 'dc1,!otherdc*' used to specify the DCs to include or exclude from backup")
 	fs.StringSliceP("location", "L", nil,
