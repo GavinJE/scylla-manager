@@ -16,6 +16,10 @@ func Wrap(fs *flag.FlagSet) Wrapper {
 	return Wrapper{fs: fs}
 }
 
+func (w Wrapper) Unwrap() *flag.FlagSet {
+	return w.fs
+}
+
 //
 // Task schedule flags
 //
