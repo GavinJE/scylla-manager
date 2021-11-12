@@ -1,7 +1,6 @@
 use: list
 
-short: |
-  List backups
+short: List backups
 
 long: |
   This commands allow you to list backups.

@@ -2,8 +2,7 @@ use: files
 
 deprecated: Use restore instead, see https://manager.docs.scylladb.com/stable/restore/index.html.
 
-short: |
-  List contents of a given backup
+short: List contents of a given backup
 
 long: |
   This command lists files that were uploaded during backup procedure.

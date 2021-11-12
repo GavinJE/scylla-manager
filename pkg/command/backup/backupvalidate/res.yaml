@@ -1,7 +1,6 @@
 use: validate
 
-short: |
-  Validate backup files in remote locations
+short: Validate backup files in remote locations
 
 long: |
   This command schedules a backup validation task.

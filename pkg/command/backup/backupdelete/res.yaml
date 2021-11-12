@@ -1,7 +1,6 @@
 use: delete
 
-short: |
-  Delete one or more uploaded snapshots
+short: Delete backup files in remote locations
 
 long: |
   This command allows you to delete files that were uploaded during backup procedure.
