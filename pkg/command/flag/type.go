@@ -46,17 +46,31 @@ func (t *Time) Type() string {
 	return "string"
 }
 
+func (t *Time) String() string {
+	if t.IsZero() {
+		return ""
+	}
+	return t.Time.String()
+}
+
 type Duration struct {
 	duration.Duration
 }
 
 var _ flag.Value = (*Duration)(nil)
 
-func (d Duration) Set(s string) (err error) {
+func (d *Duration) Set(s string) (err error) {
 	d.Duration, err = duration.ParseDuration(s)
 	return
 }
 
-func (d Duration) Type() string {
+func (d *Duration) Type() string {
 	return "string"
+}
+
+func (d *Duration) String() string {
+	if d.Duration == 0 {
+		return ""
+	}
+	return d.Duration.String()
 }

@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/scylladb/go-set/strset"
+	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 	"gopkg.in/yaml.v2"
 )
@@ -24,25 +25,40 @@ func (w Wrapper) Unwrap() *flag.FlagSet {
 
 var keywords = strset.New(
 	"use",
+	"deprecated",
 	"short",
 	"long",
 )
 
-func (w Wrapper) MustSetUsages(b []byte) {
+func MustSetUsages(cmd *cobra.Command, b []byte, required ...string) {
 	u := make(map[string]string)
 	if err := yaml.Unmarshal(b, u); err != nil {
 		panic(err)
 	}
 
+	fs := cmd.Flags()
+	// Set usages from file
 	for k, v := range u {
 		if keywords.Has(k) {
 			continue
 		}
-		f := w.fs.Lookup(k)
+		f := fs.Lookup(k)
 		if f == nil {
 			panic("missing flag " + k)
 		}
 		f.Usage = v
+	}
+	// Make sure flags are set
+	fs.Visit(func(f *flag.Flag) {
+		if len(f.Usage) == 0 {
+			panic("no usage for flag " + f.Name)
+		}
+	})
+	// Mark flags as required
+	for _, name := range required {
+		if err := cmd.MarkFlagRequired(name); err != nil {
+			panic(err)
+		}
 	}
 }
 

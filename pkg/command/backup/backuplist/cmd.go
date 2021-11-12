@@ -45,16 +45,16 @@ func NewCommand(client *managerclient.Client) *cobra.Command {
 }
 
 func (cmd *command) init() {
+	defer flag.MustSetUsages(&cmd.Command, res)
+
 	w := flag.Wrap(cmd.Flags())
 	w.Cluster(&cmd.cluster)
 	w.Location(&cmd.location)
 	w.Keyspace(&cmd.keyspace)
-
 	w.Unwrap().BoolVar(&cmd.allClusters, "all-clusters", false, "")
 	w.Unwrap().Var(&cmd.minDate, "min-date", "")
 	w.Unwrap().Var(&cmd.maxDate, "max-date", "")
 	w.Unwrap().BoolVar(&cmd.showTables, "show-tables", false, "")
-	w.MustSetUsages(res)
 }
 
 func (cmd *command) run() error {

@@ -44,13 +44,13 @@ func NewCommand(client *managerclient.Client) *cobra.Command {
 }
 
 func (cmd *command) init() {
+	defer flag.MustSetUsages(&cmd.Command, res)
+
 	w := flag.Wrap(cmd.Flags())
 	w.Cluster(&cmd.cluster)
 	w.Location(&cmd.location)
-
 	w.Unwrap().BoolVar(&cmd.deleteOrphanedFiles, "delete-orphaned-files", false, "")
 	w.Unwrap().IntVar(&cmd.parallel, "parallel", 0, "")
-	w.MustSetUsages(res)
 
 	w.Interval(&cmd.interval)
 	w.StartDate(&cmd.startDate)
