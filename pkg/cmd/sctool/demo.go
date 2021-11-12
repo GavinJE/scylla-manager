@@ -7,6 +7,7 @@ import (
 	"github.com/scylladb/scylla-manager/pkg/command/backup/backupfiles"
 	"github.com/scylladb/scylla-manager/pkg/command/backup/backuplist"
 	"github.com/scylladb/scylla-manager/pkg/command/backup/backupvalidate"
+	"github.com/scylladb/scylla-manager/pkg/command/resume"
 	"github.com/scylladb/scylla-manager/pkg/command/status"
 	"github.com/scylladb/scylla-manager/pkg/command/suspend"
 	"github.com/spf13/cobra"
@@ -22,5 +23,6 @@ func init() {
 	n.AddCommand(backupdelete.NewCommand(&client))
 	n.AddCommand(status.NewCommand(&client))
 	n.AddCommand(suspend.NewCommand(&client))
+	n.AddCommand(resume.NewCommand(&client))
 	rootCmd.AddCommand(n)
 }

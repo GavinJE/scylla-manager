@@ -1,6 +1,6 @@
 // Copyright (C) 2017 ScyllaDB
 
-package suspend
+package resume
 
 import (
 	_ "embed"
@@ -18,7 +18,8 @@ type command struct {
 	cobra.Command
 	client *managerclient.Client
 
-	cluster string
+	cluster    string
+	startTasks bool
 }
 
 func NewCommand(client *managerclient.Client) *cobra.Command {
@@ -40,8 +41,10 @@ func (cmd *command) init() {
 
 	w := flag.Wrap(cmd.Flags())
 	w.Cluster(&cmd.cluster)
+	w.Unwrap().BoolVar(&cmd.startTasks, "start-tasks", false, "")
 }
 
 func (cmd *command) run() error {
-	return cmd.client.Suspend(cmd.Context(), cmd.cluster)
+	return cmd.client.Resume(cmd.Context(), cmd.cluster, cmd.startTasks)
 }
+
