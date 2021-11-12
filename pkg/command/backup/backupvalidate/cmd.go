@@ -1,6 +1,6 @@
 // Copyright (C) 2017 ScyllaDB
 
-package backup
+package backupvalidate
 
 import (
 	_ "embed"
@@ -13,11 +13,11 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-//go:embed validate.yaml
-var validateRes []byte
+//go:embed res.yaml
+var res []byte
 
-type validateCommand struct {
-	*cobra.Command
+type command struct {
+	cobra.Command
 	client *managerclient.Client
 
 	cluster             string
@@ -29,39 +29,35 @@ type validateCommand struct {
 	numRetries          int
 }
 
-func NewValidateCommand(client *managerclient.Client) *cobra.Command {
-	c := &cobra.Command{
-		Use: "validate",
+func NewCommand(client *managerclient.Client) *cobra.Command {
+	cmd := &command{
+		client: client,
 	}
-	if err := yaml.Unmarshal(validateRes, c); err != nil {
+	if err := yaml.Unmarshal(res, &cmd.Command); err != nil {
 		panic(err)
 	}
-
-	cmd := &validateCommand{
-		Command: c,
-		client:  client,
-	}
 	cmd.init()
-
-	c.RunE = func(_ *cobra.Command, args []string) error {
+	cmd.RunE = func(_ *cobra.Command, args []string) error {
 		return cmd.run()
 	}
-	return c
+	return &cmd.Command
 }
 
-func (cmd *validateCommand) init() {
+func (cmd *command) init() {
 	w := flag.Wrap(cmd.Flags())
 	w.Cluster(&cmd.cluster)
 	w.Location(&cmd.location)
-	w.Unwrap().BoolVar(&cmd.deleteOrphanedFiles, "delete-orphaned-files", false, "If set data files not belonging to any snapshot will be deleted after the validation.")
-	w.Unwrap().IntVar(&cmd.parallel, "parallel", 0, "Number of hosts to analyze in parallel.")
+
+	w.Unwrap().BoolVar(&cmd.deleteOrphanedFiles, "delete-orphaned-files", false, "")
+	w.Unwrap().IntVar(&cmd.parallel, "parallel", 0, "")
+	w.MustSetUsages(res)
 
 	w.Interval(&cmd.interval)
 	w.StartDate(&cmd.startDate)
 	w.NumRetries(&cmd.numRetries, cmd.numRetries)
 }
 
-func (cmd *validateCommand) run() error {
+func (cmd *command) run() error {
 	t := &managerclient.Task{
 		Type:       "validate_backup",
 		Enabled:    true,
@@ -90,7 +86,7 @@ func (cmd *validateCommand) run() error {
 	return nil
 }
 
-func (cmd *validateCommand) schedule() *managerclient.Schedule {
+func (cmd *command) schedule() *managerclient.Schedule {
 	return &managerclient.Schedule{
 		Interval:   cmd.interval.String(),
 		StartDate:  strfmt.DateTime(cmd.startDate.Time),

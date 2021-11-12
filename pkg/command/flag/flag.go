@@ -5,7 +5,9 @@ package flag
 import (
 	"os"
 
+	"github.com/scylladb/go-set/strset"
 	flag "github.com/spf13/pflag"
+	"gopkg.in/yaml.v2"
 )
 
 type Wrapper struct {
@@ -18,6 +20,30 @@ func Wrap(fs *flag.FlagSet) Wrapper {
 
 func (w Wrapper) Unwrap() *flag.FlagSet {
 	return w.fs
+}
+
+var keywords = strset.New(
+	"use",
+	"short",
+	"long",
+)
+
+func (w Wrapper) MustSetUsages(b []byte) {
+	u := make(map[string]string)
+	if err := yaml.Unmarshal(b, u); err != nil {
+		panic(err)
+	}
+
+	for k, v := range u {
+		if keywords.Has(k) {
+			continue
+		}
+		f := w.fs.Lookup(k)
+		if f == nil {
+			panic("missing flag " + k)
+		}
+		f.Usage = v
+	}
 }
 
 //

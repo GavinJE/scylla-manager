@@ -9,7 +9,8 @@ glob: |
   Patterns are evaluated from left to right.
   If a pattern starts with ``!`` it unselects items that were selected by previous patterns i.e. ``a?,!aa`` selects *ab* but not *aa*.
 
-cluster: The target cluster `name` or ID.
+cluster: |
+  The target cluster `name` or ID.
 
 dc: |
   A `list` of datacenter glob patterns separated by a comma, e.g. ``dc1,!otherdc*`` used to specify the datacenters to include or exclude.

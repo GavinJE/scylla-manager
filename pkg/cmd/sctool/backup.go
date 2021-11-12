@@ -240,7 +240,7 @@ var backupListCmd = &cobra.Command{
 			}
 		})
 
-		list, err := client.ListBackups(ctx, cfgCluster, location, allClusters, keyspace, minDate, maxDate)
+		list, err := client.ListBackups(ctx, cfgCluster, location, allClusters, keyspace, time.Time(minDate), time.Time(maxDate))
 		stillWaiting.Store(false)
 		if err != nil {
 			return err
