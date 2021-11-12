@@ -26,6 +26,7 @@ func (w Wrapper) Unwrap() *flag.FlagSet {
 var keywords = strset.New(
 	"use",
 	"deprecated",
+	"example",
 	"short",
 	"long",
 )

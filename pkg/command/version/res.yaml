@@ -4,4 +4,4 @@ short: |
   Show version information
 
 long: |
-  The version command shows the currently installed sctool version and the Scylla Manager server version.
+  This command shows the currently installed sctool version and the Scylla Manager server version.
