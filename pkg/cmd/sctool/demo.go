@@ -3,6 +3,7 @@
 package main
 
 import (
+	"github.com/scylladb/scylla-manager/pkg/command/backup"
 	"github.com/scylladb/scylla-manager/pkg/command/backup/backupdelete"
 	"github.com/scylladb/scylla-manager/pkg/command/backup/backupfiles"
 	"github.com/scylladb/scylla-manager/pkg/command/backup/backuplist"
@@ -24,5 +25,6 @@ func init() {
 	n.AddCommand(status.NewCommand(&client))
 	n.AddCommand(suspend.NewCommand(&client))
 	n.AddCommand(resume.NewCommand(&client))
+	n.AddCommand(backup.NewCommand(&client))
 	rootCmd.AddCommand(n)
 }
