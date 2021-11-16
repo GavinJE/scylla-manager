@@ -67,19 +67,19 @@ func MustSetUsages(cmd *cobra.Command, b []byte, required ...string) {
 // Task schedule flags
 //
 
-func (w Wrapper) Enabled(p *bool) {
+func (w Wrapper) enabled(p *bool) {
 	w.fs.BoolVar(p, "enabled", true, usage["enabled"])
 }
 
-func (w Wrapper) Interval(p *Duration) {
+func (w Wrapper) interval(p *Duration) {
 	w.fs.VarP(p, "interval", "i", usage["interval"])
 }
 
-func (w Wrapper) StartDate(p *Time) {
+func (w Wrapper) startDate(p *Time) {
 	w.fs.VarP(p, "start-date", "s", usage["start-date"])
 }
 
-func (w Wrapper) NumRetries(p *int, def int) {
+func (w Wrapper) numRetries(p *int, def int) {
 	w.fs.IntVarP(p, "num-retries", "r", def, usage["num-retries"])
 }
 

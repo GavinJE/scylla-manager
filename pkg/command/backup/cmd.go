@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-openapi/strfmt"
 	"github.com/scylladb/scylla-manager/pkg/command/flag"
 	"github.com/scylladb/scylla-manager/pkg/managerclient"
 	"github.com/scylladb/scylla-manager/pkg/service/scheduler"
@@ -23,9 +22,8 @@ var res []byte
 var updateRes []byte
 
 type command struct {
-	cobra.Command
+	flag.TaskBase
 	client *managerclient.Client
-	update bool
 
 	cluster          string
 	dc               []string
@@ -38,28 +36,28 @@ type command struct {
 	dryRun           bool
 	showTables       bool
 	purgeOnly        bool
-	enabled          bool
-	interval         flag.Duration
-	startDate        flag.Time
-	numRetries       int
 }
 
 func NewCommand(client *managerclient.Client) *cobra.Command {
-	updateCmd := newCommand(client, updateRes)
-	updateCmd.update = true
-	updateCmd.Command.Args = cobra.ExactArgs(1)
-
-	cmd := newCommand(client, res)
+	cmd := newCommand(client, false)
+	updateCmd := newCommand(client, true)
 	cmd.AddCommand(&updateCmd.Command)
 
 	return &cmd.Command
 }
 
-func newCommand(client *managerclient.Client, res []byte) *command {
+func newCommand(client *managerclient.Client, update bool) *command {
+	var r []byte
+	if update {
+		r = updateRes
+	} else {
+		r = res
+	}
+
 	cmd := &command{
 		client: client,
 	}
-	if err := yaml.Unmarshal(res, &cmd.Command); err != nil {
+	if err := yaml.Unmarshal(r, &cmd.Command); err != nil {
 		panic(err)
 	}
 	cmd.init()
@@ -84,33 +82,29 @@ func (cmd *command) init() {
 	w.Unwrap().BoolVar(&cmd.dryRun, "dry-run", false, "")
 	w.Unwrap().BoolVar(&cmd.showTables, "show-tables", false, "")
 	w.Unwrap().BoolVar(&cmd.purgeOnly, "purge-only", false, "")
-
-	w.Enabled(&cmd.enabled)
-	w.Interval(&cmd.interval)
-	w.StartDate(&cmd.startDate)
-	w.NumRetries(&cmd.numRetries, cmd.numRetries)
 }
 
 func (cmd *command) run(args []string) error {
 	var task *managerclient.Task
 
-	if cmd.update {
+	if cmd.Update() {
 		taskType, taskID, err := managerclient.TaskSplit(args[0])
 		if err != nil {
 			return err
 		}
-		if scheduler.TaskType(taskType) != scheduler.BackupTask {
-			return fmt.Errorf("backup update can't handle %s task", taskType)
+		if scheduler.TaskType(taskType) != "backup" {
+			return fmt.Errorf("can't handle %s task", taskType)
 		}
 		task, err = cmd.client.GetTask(cmd.Context(), cmd.cluster, taskType, taskID)
 		if err != nil {
 			return err
 		}
+		cmd.UpdateTask(task)
 	} else {
 		task = &managerclient.Task{
 			Type:       "backup",
-			Enabled:    cmd.enabled,
-			Schedule:   cmd.schedule(),
+			Enabled:    cmd.Enabled(),
+			Schedule:   cmd.Schedule(),
 			Properties: make(map[string]interface{}),
 		}
 	}
@@ -176,10 +170,3 @@ func (cmd *command) run(args []string) error {
 	return nil
 }
 
-func (cmd *command) schedule() *managerclient.Schedule {
-	return &managerclient.Schedule{
-		Interval:   cmd.interval.String(),
-		StartDate:  strfmt.DateTime(cmd.startDate.Time),
-		NumRetries: int64(cmd.numRetries),
-	}
-}
