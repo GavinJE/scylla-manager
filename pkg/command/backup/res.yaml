@@ -6,7 +6,7 @@ long: |
   This command allows you to schedule or run ad-hoc cluster backup.
 
 retention: |
-  The `number` of backups to store, once this number is reached, the next backup which comes in from this destination will initiate a purge of the oldest backup.
+  The number of backups to store, once this number is reached, the next backup which comes in from this destination will initiate a purge of the oldest backup.
 
 rate-limit: |
   Limits the upload rate (as expressed in  megabytes (MiB) per second) at which snapshotfiles can be uploaded from a Scylla node to its backup destination.
@@ -15,13 +15,13 @@ rate-limit: |
   Set to 0 for no limit (default 100).
 
 snapshot-parallel: |
-  A comma-separated `list` of snapshot parallelism limits in the format ``[<dc>:]<limit>``.
+  A comma-separated list of snapshot parallelism limits in the format ``[<dc>:]<limit>``.
   The ``dc`` part is optional and allows for specifying different limits in selected datacenters.
   If the ``dc`` part is not set, the limit is global and the runs are parallel in ``n`` nodes.
   If for example, you were to set 'dc1:2,5', then ``dc1`` would have two parallel nodes and there would be five parallel nodes in the other DCs.
 
-upload-parallel:
-  A comma-separated `list` of upload parallelism limits in the format ``[<dc>:]<limit>``.
+upload-parallel: |
+  A comma-separated list of upload parallelism limits in the format ``[<dc>:]<limit>``.
   The ``dc`` part is optional and allows for specifying different limits in selected datacenters.
   If the ``dc`` part is not set, the limit is global (e.g. 'dc1:2,5') the runs are parallel in ``n`` nodes.
   If for example, you were to set 'dc1:2,5', then ``dc1`` would have two parallel nodes and there would be five parallel nodes in the other DCs.

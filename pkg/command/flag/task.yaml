@@ -14,7 +14,7 @@ interval: |
   For example, if you select ``--interval 7d`` task would run weekly at the ``--start-date`` time.
 
 start-date: |
-  The `date` can be expressed relatively to now or as a RFC3339 formatted string.
+  The date can be expressed relatively to now or as a RFC3339 formatted string.
   To run the task in 2 hours use ``now+2h``, supported units are:
 
   * ``d`` - days
@@ -27,4 +27,4 @@ start-date: |
   If you want the repair to start immediately, use the value ``now`` or skip this flag.
 
 num-retries: |
-  `Number` of times a task reruns following a failure.
+  Number of times a task reruns following a failure.

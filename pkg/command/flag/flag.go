@@ -95,6 +95,10 @@ func (w Wrapper) Datacenter(p *[]string) {
 	w.fs.StringSliceVar(p, "dc", nil, usage["dc"])
 }
 
+func (w Wrapper) FailFast(p *bool) {
+	w.fs.BoolVar(p, "fail-fast", false, usage["fail-fats"])
+}
+
 func (w Wrapper) Keyspace(p *[]string) {
 	w.fs.StringSliceVarP(p, "keyspace", "K", nil, usage["keyspace"])
 }

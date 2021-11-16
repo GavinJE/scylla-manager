@@ -12,7 +12,7 @@ all-clusters: |
   Shows backups for all clusters.
 
 delimiter: |
-  Dictates which character will be used as a `whitespace` between remote file path and information about keyspace and table.
+  Dictates which character will be used as a whitespace between remote file path and information about keyspace and table.
 
 snapshot-tag: |
   Snapshot tag as read from the backup listing.
